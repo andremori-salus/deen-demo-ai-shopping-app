@@ -9,8 +9,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sorted = products.sort((a, b) => a.price - b.price);
       res.json(sorted[0].relatedProducts.filter(id => id > 0));
     } catch (error) {
-      console.error(JSON.stringify(error));
-      throw error;
+      console.error({
+        severity: "ERROR",
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      res.status(500).json({ error: "Failed to fetch products" });
     }
   });
 
